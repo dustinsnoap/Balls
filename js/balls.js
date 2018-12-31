@@ -1,48 +1,58 @@
 window.onload = function () {
     //set up listeners
-    let canvas = new Canvas("sack")
-    run(canvas);
+    setupCanvas();
+    startListeners();
+    let canvas = getCanvas();
+    run();
 }
 
 function startListeners() {
+    let canvas = getCanvas();
     let ballDropper = document.getElementById("btn_drop");
-    ballDropper.addEventListener("click", /*make ball*/);
+    ballDropper.addEventListener("click", canvas.addBall);
 }
 
-function run(canvas) {
-    window.setInterval(clock(canvas),30);
+function getCanvas() {
+    console.log("Test");
+    return document.getElementById("sack");
+}
+function setupCanvas() {
+    let canvas = document.getElementById("sack");
+    canvas.ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight - 50;
+    canvas.width = window.innerWidth;
+    canvas.balls = [];
+    canvas.addBall = function() {
+        canvas.balls.push(new Ball(getRand(1000), getRand(1000), 1, "red", 10));
+    };
+    canvas.clear = function() {
+        console.log("tes");
+        this.ctx.clearRect(0,0,this.width,this.height);
+    };
+}
+
+function run() {
+    window.setInterval(clock,500);
 }
 function getRand(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-function clock(canvas) {
+function clock() {
     //clear canvas
-    canvas.clear();
-    let balls = [];
-    let mouse = {x: 0, y: 0};
+    let canvas = getCanvas();
+    // canvas.clear();
+    // let balls = [];
+    // let mouse = {x: 0, y: 0};
     //draw balls
-    balls.push(new Ball(getRand(100), getRand(1000), 1, "red", 1));
-    balls.forEach(function(ball) {
-        ball.move();
+    canvas.balls.forEach(function(ball) {
+        // ball.move();
         ball.draw();
     });
-    console.log("tick")
+    console.log(canvas.balls);
 }
 
 //\/==CLASSES==\/
-class Canvas {
-    constructor(name) {
-        this.name = name;
-        this.canvas = document.getElementById(this.name);
-        this.ctx = this.canvas.getContext("2d");
-        this.height = window.innerHeight - 50;
-        this.width = window.innerWidth;
-    }
-    clear() {
-        this.ctx.clearRect(0,0,this.width,this.height);
-    }
-}
 class Ball {
     constructor(x, y, speed, color, radius) {
         this.x = x;
@@ -50,7 +60,7 @@ class Ball {
         this.speed = speed;
         this.color = color;
         this.radius = radius;
-        this.canvas = new Canvas("sack");
+        this.canvas = getCanvas();
     }
     draw() {
         this.canvas.ctx.fillStyle = this.color;
