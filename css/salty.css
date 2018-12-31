@@ -18,6 +18,7 @@ body {
     background: transparent;
     border: 0;
     transition: color .22s ease-in-out;
+    outline: none;
 }
 .nav__btn:hover {
     color: #00ccff;

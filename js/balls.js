@@ -5,15 +5,17 @@ window.onload = function () {
     let canvas = getCanvas();
     run();
 }
-
+//\/===SETUP===\/
 function startListeners() {
     let canvas = getCanvas();
     let ballDropper = document.getElementById("btn_drop");
     ballDropper.addEventListener("click", canvas.addBall);
+    let colorChanger = document.getElementById("btn_color");
+    colorChanger.addEventListener("click", canvas.changeBallColor);
+    let clear = document.getElementById("btn_clear");
+    clear.addEventListener("click", canvas.castrate);
 }
-
 function getCanvas() {
-    console.log("Test");
     return document.getElementById("sack");
 }
 function setupCanvas() {
@@ -25,32 +27,32 @@ function setupCanvas() {
     canvas.addBall = function() {
         canvas.balls.push(new Ball(getRand(canvas.width), getRand(canvas.height), 1, 1, "red", 10));
     };
+    canvas.changeBallColor = function() {
+        canvas.balls.forEach(function(ball) {
+            ball.changeColor("#00ccff");
+        });
+    }
+    canvas.castrate = function() {
+        canvas.balls = [];
+    }
     canvas.clear = function() {
-        console.log("tes");
         this.ctx.clearRect(0,0,this.width,this.height);
     };
 }
-
 function run() {
     window.setInterval(clock,1);
 }
 function getRand(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
-
+//\/===Main Code===\/
 function clock() {
-    //clear canvas
     let canvas = getCanvas();
-    // canvas.clear();
-    // let balls = [];
-    // let mouse = {x: 0, y: 0};
-    //draw balls
     canvas.clear();
     canvas.balls.forEach(function(ball) {
         ball.move();
         ball.draw();
     });
-    console.log(canvas.balls);
 }
 
 //\/==CLASSES==\/
@@ -83,5 +85,4 @@ class Ball {
         if(this.x <= 0 || this.x >= this.canvas.width) this.dx *= -1;
         if(this.y <= 0 || this.y >= this.canvas.height) this.dy *= -1;
     }
-    kill() {}
 }
