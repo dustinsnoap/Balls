@@ -24,9 +24,14 @@ function setupCanvas() {
     canvas.height = window.innerHeight - 50;
     canvas.width = window.innerWidth;
     canvas.balls = [];
+    canvas.fps = 60;
+    canvas.gravity = 9.8;
     canvas.addBall = function() {
-        canvas.balls.push(new Ball(getRand(canvas.width), getRand(canvas.height), 1, 1, "red", 10));
+        canvas.balls.push(new Ball(getRand(canvas.width), getRand(canvas.height), 1, 0, "red", 10, .75));
     };
+    canvas.changeFPS = function(fps) {
+        canvas.fps = fps;
+    }
     canvas.changeBallColor = function() {
         canvas.balls.forEach(function(ball) {
             ball.changeColor("#00ccff");
@@ -40,7 +45,8 @@ function setupCanvas() {
     };
 }
 function run() {
-    window.setInterval(clock,1);
+    let canvas = getCanvas();
+    window.setInterval(clock, 1000/canvas.fps);
 }
 function getRand(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -57,13 +63,14 @@ function clock() {
 
 //\/==CLASSES==\/
 class Ball {
-    constructor(x, y, dx, dy, color, radius) {
+    constructor(x, y, dx, dy, color, radius, elasticity) {
         this.x = x;
         this.y = y;
         this.dx = dx;
         this.dy = dy;
         this.color = color;
         this.radius = radius;
+        this.elasticity = elasticity;
         this.canvas = getCanvas();
     }
     draw() {
@@ -82,7 +89,16 @@ class Ball {
     move() {
         this.x += this.dx;
         this.y += this.dy;
+        this.dy += this.canvas.gravity / this.canvas.fps;
+        console.log(this.y + " / " + this.canvas.height + " : " + this.dy);
+        // console.log(this.dy);
         if(this.x <= 0 || this.x >= this.canvas.width) this.dx *= -1;
-        if(this.y <= 0 || this.y >= this.canvas.height) this.dy *= -1;
+        if(this.y <= 0) {
+            this.dy *= -1;
+        } else if(this.y >= this.canvas.height) {
+            console.log("floor");
+            this.y = this.canvas.height;
+            this.dy = this.dy * this.elasticity * -1;
+        }
     }
 }
